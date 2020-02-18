@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    tools:showIn="@layout/activity_main">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="70dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="center_horizontal">
+
+            <Button
+                android:id="@+id/button_1"
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:text="@string/flash_cards"/>
+
+            <Button
+                android:id="@+id/button_2"
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:text="@string/notes"/>
+
+            <Button
+                android:id="@+id/button_3"
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:text="@string/calender"/>
+
+            <Button
+                android:id="@+id/button_4"
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:text="@string/to_do_list" />
+
+            <Button
+                android:id="@+id/button_5"
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:text="@string/i_o_u"/>
+
+            <Button
+                android:id="@+id/button_6"
+                android:layout_width="350dp"
+                android:layout_height="150dp"
+                android:text="@string/Travel"/>
+        </LinearLayout>
+    </HorizontalScrollView>
+</android.support.design.widget.CoordinatorLayout>
