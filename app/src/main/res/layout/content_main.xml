@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity"
+    tools:context="com.jonburleson.utilitybelt.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <HorizontalScrollView
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingTop="70dp">
+        android:layout_height="wrap_content"
+        android:paddingTop="65dp">
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -54,5 +54,5 @@
                 android:layout_height="150dp"
                 android:text="@string/Travel"/>
         </LinearLayout>
-    </HorizontalScrollView>
-</android.support.design.widget.CoordinatorLayout>
+    </ScrollView>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

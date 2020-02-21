@@ -1,4 +1,4 @@
-package com.example.jonathan.utilitybelt;
+package com.jonburleson.utilitybelt;
 
 import org.junit.Test;
 
