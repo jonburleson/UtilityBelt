@@ -10,7 +10,8 @@
             android:defaultValue="false"
             android:key="darkMode"
             android:title="@string/pref_dark_mode"
-            android:summary="Requires reboot of app" />
+            android:summaryOn="Active: Dark mode"
+            android:summaryOff="Active: Light mode"/>
     </PreferenceCategory>
 
     <PreferenceCategory
