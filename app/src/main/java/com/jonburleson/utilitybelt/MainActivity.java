@@ -11,6 +11,8 @@ import androidx.preference.PreferenceManager;
 
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -25,7 +27,17 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        //PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
+        final Button button_flash_cards = (Button)findViewById(R.id.button_flash_cards);
+        final Button button_notes = (Button)findViewById(R.id.button_notes);
+        final Button button_calender = (Button)findViewById(R.id.button_calender);
+        final Button button_to_do_list = (Button)findViewById(R.id.button_to_do_list);
+        final Button button_iou = (Button)findViewById(R.id.button_iou);
+        final Button button_travel = (Button)findViewById(R.id.button_travel);
+
+        button_calender.setEnabled(false);
+        button_to_do_list.setEnabled(false);
+        button_iou.setEnabled(false);
+        button_travel.setEnabled(false);
 
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         updateNightMode();
@@ -44,6 +56,22 @@ public class MainActivity extends AppCompatActivity {
                     }
                 };
         sharedPref.registerOnSharedPreferenceChangeListener(spListener);
+
+        button_flash_cards.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, FlashCardsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        button_notes.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(MainActivity.this, NotesActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     public void updateNightMode() {
@@ -87,7 +115,6 @@ public class MainActivity extends AppCompatActivity {
     //    super.onDestroy();
     //    sharedPref.unregisterOnSharedPreferenceChangeListener(spListener);
     //}
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

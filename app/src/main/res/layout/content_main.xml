@@ -19,40 +19,40 @@
             android:layout_gravity="center_horizontal">
 
             <Button
-                android:id="@+id/button_1"
+                android:id="@+id/button_flash_cards"
                 android:layout_width="350dp"
                 android:layout_height="150dp"
                 android:text="@string/flash_cards"/>
 
             <Button
-                android:id="@+id/button_2"
+                android:id="@+id/button_notes"
                 android:layout_width="350dp"
                 android:layout_height="150dp"
                 android:text="@string/notes"/>
 
             <Button
-                android:id="@+id/button_3"
+                android:id="@+id/button_calender"
                 android:layout_width="350dp"
                 android:layout_height="150dp"
                 android:text="@string/calender"/>
 
             <Button
-                android:id="@+id/button_4"
+                android:id="@+id/button_to_do_list"
                 android:layout_width="350dp"
                 android:layout_height="150dp"
                 android:text="@string/to_do_list" />
 
             <Button
-                android:id="@+id/button_5"
+                android:id="@+id/button_iou"
                 android:layout_width="350dp"
                 android:layout_height="150dp"
-                android:text="@string/i_o_u"/>
+                android:text="@string/iou"/>
 
             <Button
-                android:id="@+id/button_6"
+                android:id="@+id/button_travel"
                 android:layout_width="350dp"
                 android:layout_height="150dp"
-                android:text="@string/Travel"/>
+                android:text="@string/travel"/>
         </LinearLayout>
     </ScrollView>
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
