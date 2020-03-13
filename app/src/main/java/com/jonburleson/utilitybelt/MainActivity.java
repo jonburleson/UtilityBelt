@@ -6,13 +6,13 @@ import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.widget.Toolbar;
+import androidx.cardview.widget.CardView;
 import androidx.preference.PreferenceManager;
 
-import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.PopupMenu;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,15 +24,13 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        final Button button_flash_cards = (Button)findViewById(R.id.button_flash_cards);
-        final Button button_notes = (Button)findViewById(R.id.button_notes);
-        final Button button_calender = (Button)findViewById(R.id.button_calender);
-        final Button button_to_do_list = (Button)findViewById(R.id.button_to_do_list);
-        final Button button_iou = (Button)findViewById(R.id.button_iou);
-        final Button button_travel = (Button)findViewById(R.id.button_travel);
+        final CardView button_flash_cards = (CardView)findViewById(R.id.button_flash_cards);
+        final CardView button_notes = (CardView)findViewById(R.id.button_notes);
+        final CardView button_calender = (CardView)findViewById(R.id.button_calender);
+        final CardView button_to_do_list = (CardView)findViewById(R.id.button_to_do_list);
+        final CardView button_iou = (CardView)findViewById(R.id.button_iou);
+        final CardView button_travel = (CardView)findViewById(R.id.button_travel);
 
         button_calender.setEnabled(false);
         button_to_do_list.setEnabled(false);
@@ -72,6 +70,29 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    public void showSettingsPopup(View v) {
+        PopupMenu popup = new PopupMenu(this, v);
+        MenuInflater inflater = popup.getMenuInflater();
+        inflater.inflate(R.menu.menu_main, popup.getMenu());
+
+        popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                // Handle popup menu item clicks here.
+                int id = item.getItemId();
+
+                if (id == R.id.action_settings) {
+                    Intent intent = new Intent(MainActivity.this, SettingsActivity.class);
+                    startActivity(intent);
+                }
+
+                return true;
+            }
+        });
+
+        popup.show();
     }
 
     public void updateNightMode() {
@@ -115,28 +136,4 @@ public class MainActivity extends AppCompatActivity {
     //    super.onDestroy();
     //    sharedPref.unregisterOnSharedPreferenceChangeListener(spListener);
     //}
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
 }
