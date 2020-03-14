@@ -65,6 +65,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/flash_cards"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
                     android:textAlignment="center" />
 
             </LinearLayout>
@@ -99,6 +101,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/notes"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
                     android:textAlignment="center" />
 
             </LinearLayout>
@@ -134,6 +138,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/calender"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
                     android:textAlignment="center" />
 
             </LinearLayout>
@@ -167,6 +173,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/to_do_list"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
                     android:textAlignment="center" />
 
             </LinearLayout>
@@ -202,6 +210,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/iou"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
                     android:textAlignment="center" />
 
             </LinearLayout>
@@ -235,6 +245,8 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/travel"
+                    android:textSize="16sp"
+                    android:textColor="@color/colorText"
                     android:textAlignment="center" />
 
             </LinearLayout>
