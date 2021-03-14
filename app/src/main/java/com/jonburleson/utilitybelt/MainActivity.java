@@ -1,22 +1,17 @@
 package com.jonburleson.utilitybelt;
 
-import android.content.Context;
-import android.content.ContextWrapper;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.app.AppCompatDelegate;
-import androidx.appcompat.view.ContextThemeWrapper;
-import androidx.appcompat.widget.PopupMenu;
-import androidx.cardview.widget.CardView;
-import androidx.preference.PreferenceManager;
-
+import android.preference.PreferenceManager;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.widget.PopupMenu;
+import androidx.cardview.widget.CardView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,12 +23,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final CardView button_flash_cards = (CardView)findViewById(R.id.button_flash_cards);
-        final CardView button_notes = (CardView)findViewById(R.id.button_notes);
-        final CardView button_calender = (CardView)findViewById(R.id.button_calender);
-        final CardView button_to_do_list = (CardView)findViewById(R.id.button_to_do_list);
-        final CardView button_iou = (CardView)findViewById(R.id.button_iou);
-        final CardView button_travel = (CardView)findViewById(R.id.button_travel);
+        final CardView button_flash_cards = findViewById(R.id.button_flash_cards);
+        final CardView button_notes = findViewById(R.id.button_notes);
+        final CardView button_calender = findViewById(R.id.button_calender);
+        final CardView button_to_do_list = findViewById(R.id.button_to_do_list);
+        final CardView button_iou = findViewById(R.id.button_iou);
+        final CardView button_travel = findViewById(R.id.button_travel);
 
         button_calender.setEnabled(false);
         button_to_do_list.setEnabled(false);
@@ -46,13 +41,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSharedPreferenceChanged(SharedPreferences sharedPref,
                                                           String key) {
-                        switch (key) {
-                            case "darkMode":
-                                //Toast.makeText(MainActivity.this, "Restart needed to take effect", Toast.LENGTH_SHORT).show();
-                                updateNightMode();
-                                break;
-                            default :
-                                break;
+                        if ("darkMode".equals(key)) {//Toast.makeText(MainActivity.this, "Restart needed to take effect", Toast.LENGTH_SHORT).show();
+                            updateNightMode();
                         }
                     }
                 };

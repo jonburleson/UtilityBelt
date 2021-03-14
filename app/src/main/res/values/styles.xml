@@ -4,8 +4,8 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
         <item name="popupMenuStyle">@style/PopupStyle</item>
+        <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -24,6 +24,15 @@
     <style name="PopupStyle" parent="@style/Widget.AppCompat.PopupMenu.Overflow">
         <item name="android:dropDownHorizontalOffset">-4dp</item>
         <item name="android:dropDownVerticalOffset">4dp</item>
+    </style>
+
+    <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+        <item name="shapeAppearanceOverlay">@style/FabShapeStyle.Cut</item>
+    </style>
+
+    <style name="FabShapeStyle.Cut" parent="ShapeAppearance.MaterialComponents.SmallComponent">
+        <item name="cornerFamily">cut</item>
+        <item name="cornerSize">6dp</item>
     </style>
 
 </resources>
