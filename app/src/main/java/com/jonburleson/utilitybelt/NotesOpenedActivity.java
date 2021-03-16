@@ -1,59 +1,40 @@
 package com.jonburleson.utilitybelt;
 
 import android.annotation.SuppressLint;
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
+import android.widget.FrameLayout;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.recyclerview.widget.GridLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+import androidx.fragment.app.DialogFragment;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
-public class NotesActivity extends AppCompatActivity {
-
-    List<Note> Notes;
+public class NotesOpenedActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_notes);
+        setContentView(R.layout.activity_notes_opened);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Notes = new ArrayList<>();
-        Notes.add(new Note("test note","Lorem ipsum", R.drawable.ic_empty_thumbnail,true));
-
-        RecyclerView rView = findViewById(R.id.recycler_view);
-        RecyclerViewAdapter rAdapter = new RecyclerViewAdapter(this, Notes);
-        rView.setLayoutManager(new GridLayoutManager(this, 3));
-        rView.setAdapter(rAdapter);
-
-        FloatingActionButton fab = findViewById(R.id.add_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(NotesActivity.this, NotesOpenedActivity.class);
-                startActivity(intent);
-            }
-        });
+        LineEditText textField = findViewById(R.id.edit_text);
+        FrameLayout textFieldBorder = findViewById(R.id.edit_text_border);
+        textField.setBackgroundColor(Color.parseColor("#f4dc72"));
+        textFieldBorder.setBackgroundColor(Color.parseColor("#f4dc72"));
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_notes_edit, menu);
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -64,9 +45,21 @@ public class NotesActivity extends AppCompatActivity {
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         switch(item.getItemId()) {
-            case R.id.action_settings:
-                Intent intent = new Intent(this, SettingsActivity.class);
-                startActivity(intent);
+            case R.id.action_bookmark:
+                //Intent intent = new Intent(this, SettingsActivity.class);
+                //startActivity(intent);
+                return true;
+            case R.id.action_thumbnail:
+                //Intent intent = new Intent(this, SettingsActivity.class);
+                //startActivity(intent);
+                return true;
+            case R.id.action_delete:
+                DialogFragment newFragment = new DialogFragmentTwoBtn(this);
+                Bundle b = new Bundle();
+                b.putString(DialogFragmentTwoBtn.TITLE, "Warning: DELETE");
+                b.putString(DialogFragmentTwoBtn.MESSAGE, "This note will be deleted. This cannot be undone.");
+                newFragment.setArguments(b);
+                newFragment.show(getSupportFragmentManager(), "delete");
                 return true;
             case android.R.id.home:
                 finish();

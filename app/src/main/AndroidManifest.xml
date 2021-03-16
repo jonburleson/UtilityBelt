@@ -5,12 +5,23 @@
 
     <application
         android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity
+            android:name=".NotesOpenedActivity"
+            android:label="NotesOpened"
+            android:parentActivityName=".NotesActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:noHistory="true">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.jonburleson.utilitybelt.NotesActivity" />
+        </activity>
         <activity
             android:name=".NotesActivity"
             android:label="Notes"

@@ -5,7 +5,7 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
         <item name="popupMenuStyle">@style/PopupStyle</item>
-        <item name="floatingActionButtonStyle">@style/FloatingActionButtonStyle</item>
+        <item name="floatingActionButtonStyle">@style/FloatingActionButtonCustom</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -26,13 +26,19 @@
         <item name="android:dropDownVerticalOffset">4dp</item>
     </style>
 
-    <style name="FloatingActionButtonStyle" parent="Widget.Design.FloatingActionButton">
+    <style name="FloatingActionButtonCustom" parent="Widget.Design.FloatingActionButton">
         <item name="shapeAppearanceOverlay">@style/FabShapeStyle.Cut</item>
     </style>
 
     <style name="FabShapeStyle.Cut" parent="ShapeAppearance.MaterialComponents.SmallComponent">
         <item name="cornerFamily">cut</item>
         <item name="cornerSize">6dp</item>
+    </style>
+
+    <style name="Divider">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">1dp</item>
+        <item name="android:background">?android:attr/listDivider</item>
     </style>
 
 </resources>
