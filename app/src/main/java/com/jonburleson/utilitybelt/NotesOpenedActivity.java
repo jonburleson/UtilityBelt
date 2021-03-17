@@ -5,15 +5,22 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.DialogFragment;
 
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
 import java.util.Objects;
 
 public class NotesOpenedActivity extends AppCompatActivity {
+
+    LineEditText noteTextField;
+    EditText noteTitleField;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -25,9 +32,12 @@ public class NotesOpenedActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        LineEditText textField = findViewById(R.id.edit_text);
+        noteTextField = findViewById(R.id.edit_text);
+        noteTextField.setBackgroundColor(Color.parseColor("#f4dc72"));
+
+        noteTitleField = findViewById(R.id.note_edit_title);
+
         FrameLayout textFieldBorder = findViewById(R.id.edit_text_border);
-        textField.setBackgroundColor(Color.parseColor("#f4dc72"));
         textFieldBorder.setBackgroundColor(Color.parseColor("#f4dc72"));
     }
 
@@ -36,6 +46,31 @@ public class NotesOpenedActivity extends AppCompatActivity {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_notes_edit, menu);
         return super.onCreateOptionsMenu(menu);
+    }
+
+    public void Save() {
+        String noteText = Objects.requireNonNull(noteTextField.getText()).toString();
+        String noteTitle = noteTitleField.getText().toString();
+
+        if (noteTitle.equals("")) {
+            noteTitle = "Untitled_Note";
+        }
+        try {
+            FileOutputStream fOut = new FileOutputStream(noteTitle, true);
+            OutputStreamWriter out = new OutputStreamWriter(fOut);
+
+            out.write(noteText);
+            out.close();
+            //Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show();
+        } catch (Throwable t) {
+            Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        Save();
+        finish();
     }
 
     @SuppressLint("NonConstantResourceId")
@@ -48,6 +83,7 @@ public class NotesOpenedActivity extends AppCompatActivity {
             case R.id.action_bookmark:
                 //Intent intent = new Intent(this, SettingsActivity.class);
                 //startActivity(intent);
+                Save();
                 return true;
             case R.id.action_thumbnail:
                 //Intent intent = new Intent(this, SettingsActivity.class);
@@ -62,6 +98,7 @@ public class NotesOpenedActivity extends AppCompatActivity {
                 newFragment.show(getSupportFragmentManager(), "delete");
                 return true;
             case android.R.id.home:
+                Save();
                 finish();
                 return true;
             default:
