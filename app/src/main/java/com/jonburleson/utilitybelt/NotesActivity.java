@@ -3,9 +3,11 @@ package com.jonburleson.utilitybelt;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,6 +16,9 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -33,7 +38,34 @@ public class NotesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         Notes = new ArrayList<>();
-        Notes.add(new Note("test note","Lorem ipsum", R.drawable.ic_empty_thumbnail,true));
+        String root = Environment.getExternalStorageDirectory().toString();
+        File noteDir = new File(root + "/notes");
+        if(noteDir.exists()) {
+            File[] files = noteDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    //if (file.isDirectory()) {
+                    //    traverse(file);
+                    //} else {
+                    // do something here with the file
+                    //}
+
+                    StringBuilder text = new StringBuilder();
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(file));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            text.append(line);
+                            text.append('\n');
+                        }
+                        br.close();
+                    } catch (Throwable t) {
+                        Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                    Notes.add(new Note(file.getName(), text.toString(), R.drawable.ic_empty_thumbnail, true));
+                }
+            }
+        }
 
         RecyclerView rView = findViewById(R.id.recycler_view);
         RecyclerViewAdapter rAdapter = new RecyclerViewAdapter(this, Notes);
