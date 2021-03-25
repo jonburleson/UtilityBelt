@@ -1,6 +1,8 @@
 package com.jonburleson.utilitybelt;
 
-public class Note {
+import java.io.Serializable;
+
+public class Note implements Serializable {
 
     private String Title;
     private String Content;
@@ -11,10 +13,10 @@ public class Note {
     }
 
     public Note(String title, String content, int thumbnail, boolean flagged) {
-        Title = title;
-        Content = content;
-        Thumbnail = thumbnail;
-        Flagged = flagged;
+        setTitle(title);
+        setContent(content);
+        setThumbnail(thumbnail);
+        setFlagged(flagged);
     }
 
     public String getTitle() {

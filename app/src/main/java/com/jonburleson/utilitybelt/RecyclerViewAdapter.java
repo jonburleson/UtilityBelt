@@ -1,31 +1,35 @@
 package com.jonburleson.utilitybelt;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.io.Serializable;
 import java.util.List;
 
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
-    private Context context;
-    private List<Note> data;
+    private final Context context;
+    private final List<Note> data;
 
     public RecyclerViewAdapter(Context context, List<Note> data) {
         this.context = context;
         this.data = data;
     }
 
+    @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view;
         LayoutInflater inflater = LayoutInflater.from(context);
-        view = inflater.inflate(R.layout.cardview_notes,parent,false);
+        view = inflater.inflate(R.layout.cardview_notes, parent,false);
         return new ViewHolder(view);
     }
 
@@ -46,7 +50,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return data.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder {
         TextView noteTitle;
         ImageView noteThumbnail;
         ImageView noteBookmark;
@@ -57,6 +61,15 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             noteTitle = (TextView)itemView.findViewById(R.id.note_title);
             noteThumbnail = (ImageView)itemView.findViewById(R.id.note_img);
             noteBookmark = (ImageView)itemView.findViewById(R.id.bookmark);
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    int position = getLayoutPosition();
+                    Intent intent = new Intent(context, NotesOpenedActivity.class);
+                    intent.putExtra("Note", (Serializable) data.get(position));
+                    context.startActivity(intent);
+                }
+            });
         }
     }
 

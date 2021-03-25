@@ -29,6 +29,7 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Intent intent = getIntent();
         setContentView(R.layout.activity_notes_opened);
 
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -40,6 +41,12 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         noteTextField.setBackgroundColor(Color.parseColor("#f4dc72"));
 
         noteTitleField = findViewById(R.id.note_edit_title);
+
+        if (intent.hasExtra("Note")){
+            Note note = (Note) getIntent().getSerializableExtra("Note");
+            noteTitleField.setText(note.getTitle());
+            noteTextField.setText(note.getContent());
+        }
 
         FrameLayout textFieldBorder = findViewById(R.id.edit_text_border);
         textFieldBorder.setBackgroundColor(Color.parseColor("#f4dc72"));
