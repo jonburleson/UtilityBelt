@@ -99,7 +99,9 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
     @Override
     public void onBackPressed() {
         Save();
-        finish();
+        Intent intent = new Intent(this, NotesActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(intent);
     }
 
     @Override
@@ -120,7 +122,6 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
                 Intent intent = new Intent(this, NotesActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 this.startActivity(intent);
-                finish();
             }
         } catch (Throwable t) {
             Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
@@ -154,7 +155,9 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
                 return true;
             case android.R.id.home:
                 Save();
-                finish();
+                Intent intent = new Intent(this, NotesActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                startActivity(intent);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
