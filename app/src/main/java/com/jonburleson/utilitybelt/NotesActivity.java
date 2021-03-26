@@ -20,12 +20,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 public class NotesActivity extends AppCompatActivity {
-
-    List<Note> Notes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +34,26 @@ public class NotesActivity extends AppCompatActivity {
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
-        Notes = new ArrayList<>();
+        FloatingActionButton fab = findViewById(R.id.add_fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(NotesActivity.this, NotesOpenedActivity.class);
+                startActivity(intent);
+            }
+        });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ArrayList<Note> Notes = new ArrayList<>();
         String root = Environment.getExternalStorageDirectory().toString();
         File noteDir = new File(root + "/notes");
         if(noteDir.exists()) {
             File[] files = noteDir.listFiles();
             if (files != null) {
                 for (File file : files) {
-                    //if (file.isDirectory()) {
-                    //    traverse(file);
-                    //} else {
-                    // do something here with the file
-                    //}
-
                     StringBuilder text = new StringBuilder();
                     try {
                         BufferedReader br = new BufferedReader(new FileReader(file));
@@ -62,24 +66,17 @@ public class NotesActivity extends AppCompatActivity {
                     } catch (Throwable t) {
                         Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
                     }
-                    Notes.add(new Note(file.getName(), text.toString(), R.drawable.ic_empty_thumbnail, true));
+                    Notes.add(new Note(file.getName(), text.toString(), R.drawable.ic_empty_thumbnail, false));
                 }
             }
         }
+        TinyDB tinydb = new TinyDB(this);
+        tinydb.putListNote("Notes", Notes);
 
         RecyclerView rView = findViewById(R.id.recycler_view);
         RecyclerViewAdapter rAdapter = new RecyclerViewAdapter(this, Notes);
         rView.setLayoutManager(new GridLayoutManager(this, 3));
         rView.setAdapter(rAdapter);
-
-        FloatingActionButton fab = findViewById(R.id.add_fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(NotesActivity.this, NotesOpenedActivity.class);
-                startActivity(intent);
-            }
-        });
     }
 
     @Override
