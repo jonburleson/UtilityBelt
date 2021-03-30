@@ -2,9 +2,11 @@ package com.jonburleson.utilitybelt;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.EditText;
@@ -13,11 +15,13 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.util.Predicate;
 import androidx.fragment.app.DialogFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
+import java.util.ArrayList;
 import java.util.Objects;
 import java.util.Random;
 
@@ -25,12 +29,19 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
 
     LineEditText noteTextField;
     EditText noteTitleField;
+    SharedPreferences sharedPref;
+    TinyDB tinydb;
+    int position;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Intent intent = getIntent();
         setContentView(R.layout.activity_notes_opened);
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+
+        tinydb = new TinyDB(this);
+        ArrayList<Note> notes = tinydb.getListNote("Notes");
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -39,13 +50,20 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
 
         noteTextField = findViewById(R.id.edit_text);
         noteTextField.setBackgroundColor(Color.parseColor("#f4dc72"));
-
         noteTitleField = findViewById(R.id.note_edit_title);
 
-        if (intent.hasExtra("Note")){
-            Note note = (Note) getIntent().getSerializableExtra("Note");
+        Note note;
+        if (sharedPref.contains("note")){
+            position = tinydb.getInt("note");
+            tinydb.remove("note");
+            note = notes.get(position);
             noteTitleField.setText(note.getTitle());
             noteTextField.setText(note.getContent());
+        }
+        else {
+            note = new Note();
+            notes.add(0, note);
+            position = 0;
         }
 
         FrameLayout textFieldBorder = findViewById(R.id.edit_text_border);
@@ -61,39 +79,57 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
 
     public String randomNameExtension(String name) {
         Random generator = new Random();
-        int n = 10000;
+        int n = 99;
         n = generator.nextInt(n);
         return (name +"_"+ n);
+    }
+
+    public void updateDb(ArrayList<Note> notes) {
+        tinydb.remove("Notes");
+        tinydb.putListNote("Notes", notes);
+    }
+
+    public void deleteNote(Note note, ArrayList<Note> notes) {
+        File file = note.getFile();
+        boolean didDelete = file.delete();
+        notes.remove(position);
     }
 
     public void Save() {
         String noteText = Objects.requireNonNull(noteTextField.getText()).toString();
         String noteTitle = noteTitleField.getText().toString();
+        ArrayList<Note> notes = tinydb.getListNote("Notes");
+        Note note = notes.get(position);
 
-        String root = Environment.getExternalStorageDirectory().toString();
-        File noteDir = new File(root + "/notes");
-        if (!noteDir.exists()) {
-            boolean madeDir = noteDir.mkdirs();
-        }
-
+        //set note title
         if (noteTitle.equals("")) {
-            noteTitle = "Untitled_Note";
-            noteTitle = randomNameExtension(noteTitle);
+            noteTitle = randomNameExtension("Untitled_Note");
         }
-        File file = new File (noteDir, noteTitle);
-        if (file.exists ()) {
-            boolean didDelete = file.delete();
-        }
+        note.setTitle(noteTitle);
+
+        //rename temp file
+        deleteNote(note, notes);
+        String root = Environment.getExternalStorageDirectory().toString();
+        File file = new File(root + "/notes", note.getTitle());
+        boolean didDelete = file.delete();
+        note.setFile(file);
+
+        //set note content
+        note.setContent(noteText);
         try {
             FileOutputStream fOut = new FileOutputStream(file);
             OutputStreamWriter out = new OutputStreamWriter(fOut);
 
             out.write(noteText);
             out.close();
-            Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, "Note Saved", Toast.LENGTH_SHORT).show();
         } catch (Throwable t) {
             Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
         }
+
+        //update notes list
+        notes.add(0, note);
+        updateDb(notes);
     }
 
     @Override
@@ -108,16 +144,10 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
     public void askMethod(String resultCode) {
         try {
             if (resultCode.equals("RESULT_OK")) {
-                String noteTitle = noteTitleField.getText().toString();
-                String root = Environment.getExternalStorageDirectory().toString();
-                File noteDir = new File(root + "/notes");
-                if (!noteDir.exists()) {
-                    boolean madeDir = noteDir.mkdirs();
-                }
-                File file = new File(noteDir, noteTitle);
-                if (file.exists()) {
-                    boolean didDelete = file.delete();
-                }
+                ArrayList<Note> notes = tinydb.getListNote("Notes");
+                Note note = notes.get(position);
+                deleteNote(note, notes);
+                updateDb(notes);
 
                 Intent intent = new Intent(this, NotesActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);

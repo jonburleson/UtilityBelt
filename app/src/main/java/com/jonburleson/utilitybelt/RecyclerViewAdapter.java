@@ -2,6 +2,8 @@ package com.jonburleson.utilitybelt;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,10 +20,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
     private final Context context;
     private final List<Note> data;
+    TinyDB tinydb;
+    String key;
 
-    public RecyclerViewAdapter(Context context, List<Note> data) {
+    public RecyclerViewAdapter(Context context, List<Note> data, String key) {
         this.context = context;
         this.data = data;
+        this.key = key;
     }
 
     @NonNull
@@ -30,6 +35,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         View view;
         LayoutInflater inflater = LayoutInflater.from(context);
         view = inflater.inflate(R.layout.cardview_notes, parent,false);
+        tinydb = new TinyDB(context);
         return new ViewHolder(view);
     }
 
@@ -66,7 +72,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override public void onClick(View v) {
                     int position = getLayoutPosition();
                     Intent intent = new Intent(context, NotesOpenedActivity.class);
-                    intent.putExtra("Note", (Serializable) data.get(position));
+                    tinydb.putInt(key, position);
                     context.startActivity(intent);
                 }
             });

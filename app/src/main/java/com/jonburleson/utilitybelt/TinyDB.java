@@ -510,13 +510,13 @@ public class TinyDB {
         Gson gson = new Gson();
 
         ArrayList<String> objStrings = getListString(key);
-        ArrayList<Note> playerList = new ArrayList<>();
+        ArrayList<Note> noteList = new ArrayList<>();
 
         for(String jObjString : objStrings){
             Note n  = gson.fromJson(jObjString,  Note.class);
-            playerList.add(n);
+            noteList.add(n);
         }
-        return playerList;
+        return noteList;
     }
 
 

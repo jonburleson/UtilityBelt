@@ -15,7 +15,7 @@ import androidx.cardview.widget.CardView;
 
 public class MainActivity extends AppCompatActivity {
 
-    SharedPreferences sharedPref = null;
+    SharedPreferences sharedPref;
     SharedPreferences.OnSharedPreferenceChangeListener spListener;
 
     @Override
