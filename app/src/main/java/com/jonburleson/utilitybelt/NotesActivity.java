@@ -92,7 +92,7 @@ public class NotesActivity extends AppCompatActivity {
         createNotesPreference();
 
         RecyclerView rView = findViewById(R.id.recycler_view);
-        RecyclerViewAdapter rAdapter = new RecyclerViewAdapter(this, notes, "note");
+        RecyclerViewAdapter rAdapter = new RecyclerViewAdapter(this, notes);
         rView.setLayoutManager(new GridLayoutManager(this, 3));
         rView.setAdapter(rAdapter);
     }

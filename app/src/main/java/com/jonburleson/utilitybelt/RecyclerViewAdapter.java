@@ -23,10 +23,9 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     TinyDB tinydb;
     String key;
 
-    public RecyclerViewAdapter(Context context, List<Note> data, String key) {
+    public RecyclerViewAdapter(Context context, List<Note> data) {
         this.context = context;
         this.data = data;
-        this.key = key;
     }
 
     @NonNull
@@ -72,7 +71,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
                 @Override public void onClick(View v) {
                     int position = getLayoutPosition();
                     Intent intent = new Intent(context, NotesOpenedActivity.class);
-                    tinydb.putInt(key, position);
+                    tinydb.putInt("note", position);
                     context.startActivity(intent);
                 }
             });

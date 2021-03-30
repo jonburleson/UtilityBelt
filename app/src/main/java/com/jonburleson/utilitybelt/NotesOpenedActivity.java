@@ -15,8 +15,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.core.util.Predicate;
-import androidx.fragment.app.DialogFragment;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -84,15 +82,17 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         return (name +"_"+ n);
     }
 
-    public void updateDb(ArrayList<Note> notes) {
+    public void updateDb(ArrayList<Note> notes, Note note) {
+        notes.remove(position);
+        notes.add(0, note);
+        position = 0;
         tinydb.remove("Notes");
         tinydb.putListNote("Notes", notes);
     }
 
-    public void deleteNote(Note note, ArrayList<Note> notes) {
+    public void deleteNoteFile(Note note) {
         File file = note.getFile();
         boolean didDelete = file.delete();
-        notes.remove(position);
     }
 
     public void Save() {
@@ -107,8 +107,8 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         }
         note.setTitle(noteTitle);
 
-        //rename temp file
-        deleteNote(note, notes);
+        //rename temp/current file
+        deleteNoteFile(note);
         String root = Environment.getExternalStorageDirectory().toString();
         File file = new File(root + "/notes", note.getTitle());
         boolean didDelete = file.delete();
@@ -128,8 +128,7 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         }
 
         //update notes list
-        notes.add(0, note);
-        updateDb(notes);
+        updateDb(notes, note);
     }
 
     @Override
@@ -146,8 +145,8 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
             if (resultCode.equals("RESULT_OK")) {
                 ArrayList<Note> notes = tinydb.getListNote("Notes");
                 Note note = notes.get(position);
-                deleteNote(note, notes);
-                updateDb(notes);
+                deleteNoteFile(note);
+                updateDb(notes, note);
 
                 Intent intent = new Intent(this, NotesActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -158,17 +157,30 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         }
     }
 
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem item = menu.findItem(R.id.action_bookmark);
+        ArrayList<Note> notes = tinydb.getListNote("Notes");
+        Note note = notes.get(position);
+        //ask the user for the opposite of current flag status
+        if (note.isFlagged()) {
+            item.setTitle("Unfavorite");
+        } else {
+            item.setTitle("Favorite");
+        }
+        return super.onPrepareOptionsMenu(menu);
+    }
+
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected (MenuItem item){
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_bookmark:
-                //Intent intent = new Intent(this, SettingsActivity.class);
-                //startActivity(intent);
-                Save();
+                ArrayList<Note> notes = tinydb.getListNote("Notes");
+                Note note = notes.get(position);
+                note.setFlagged(!note.isFlagged());
+                updateDb(notes, note);
                 return true;
             case R.id.action_thumbnail:
                 //Intent intent = new Intent(this, SettingsActivity.class);
