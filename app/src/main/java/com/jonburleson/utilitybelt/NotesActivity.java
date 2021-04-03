@@ -41,6 +41,7 @@ public class NotesActivity extends AppCompatActivity {
         getSupportActionBar().setDisplayShowHomeEnabled(true);
 
         FloatingActionButton fab = findViewById(R.id.add_fab);
+        fab.setAlpha(0.80f);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -51,6 +52,34 @@ public class NotesActivity extends AppCompatActivity {
     }
 
     public void createNotesPreference() {
+        TinyDB tinydb = new TinyDB(this);
+        notes = new ArrayList<>();
+        String root = Environment.getExternalStorageDirectory().toString();
+        File noteDir = new File(root + "/notes");
+        if(noteDir.exists()) {
+            File[] files = noteDir.listFiles();
+            if (files != null) {
+                for (File file : files) {
+                    StringBuilder text = new StringBuilder();
+                    try {
+                        BufferedReader br = new BufferedReader(new FileReader(file));
+                        String line;
+                        while ((line = br.readLine()) != null) {
+                            text.append(line);
+                            text.append('\n');
+                        }
+                        br.close();
+                    } catch (Throwable t) {
+                        Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
+                    }
+                    notes.add(new Note(file.getName(), text.toString(), R.drawable.ic_empty_thumbnail, false, file));
+                }
+            }
+        }
+        tinydb.putListNote("Notes", notes);
+    }
+
+    public void updateDb() {
         super.onStart();
         TinyDB tinydb = new TinyDB(this);
 
@@ -58,30 +87,7 @@ public class NotesActivity extends AppCompatActivity {
             notes = tinydb.getListNote("Notes");
         }
         else {
-            notes = new ArrayList<>();
-            String root = Environment.getExternalStorageDirectory().toString();
-            File noteDir = new File(root + "/notes");
-            if(noteDir.exists()) {
-                File[] files = noteDir.listFiles();
-                if (files != null) {
-                    for (File file : files) {
-                        StringBuilder text = new StringBuilder();
-                        try {
-                            BufferedReader br = new BufferedReader(new FileReader(file));
-                            String line;
-                            while ((line = br.readLine()) != null) {
-                                text.append(line);
-                                text.append('\n');
-                            }
-                            br.close();
-                        } catch (Throwable t) {
-                            Toast.makeText(this, "Exception: " + t.toString(), Toast.LENGTH_LONG).show();
-                        }
-                        notes.add(new Note(file.getName(), text.toString(), R.drawable.ic_empty_thumbnail, false, file));
-                    }
-                }
-            }
-            tinydb.putListNote("Notes", notes);
+            createNotesPreference();
         }
     }
 
@@ -89,7 +95,7 @@ public class NotesActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
 
-        createNotesPreference();
+        updateDb();
 
         RecyclerView rView = findViewById(R.id.recycler_view);
         RecyclerViewAdapter rAdapter = new RecyclerViewAdapter(this, notes);

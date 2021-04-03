@@ -20,6 +20,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Objects;
 import java.util.Random;
 
@@ -34,7 +36,6 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Intent intent = getIntent();
         setContentView(R.layout.activity_notes_opened);
         sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -60,8 +61,8 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         }
         else {
             note = new Note();
-            notes.add(0, note);
-            position = 0;
+            addNote(notes, note);
+            updateNotes(notes);
         }
 
         FrameLayout textFieldBorder = findViewById(R.id.edit_text_border);
@@ -82,36 +83,76 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         return (name +"_"+ n);
     }
 
-    public void updateDb(ArrayList<Note> notes, Note note) {
-        notes.remove(position);
+    public void sortNotes(ArrayList<Note> notes) {
+        //run only on activity close
+        Comparator<Note> compare = new Comparator<Note>() {
+            @Override
+            public int compare(Note ln, Note rn) {
+                String ln_string = ln.getTitle().toLowerCase();
+                String rn_string = rn.getTitle().toLowerCase();
+                return ln_string.compareTo(rn_string);
+            }
+        };
+        Collections.sort(notes, compare);
+
+        int num_flagged = 0;
+        for (int i = 0 ; i < notes.size() ; i++) {
+            Note note = notes.get(i);
+            if (note.isFlagged()) {
+                notes.remove(note);
+                notes.add(num_flagged, note);
+                num_flagged++;
+            }
+        }
+
+        updateNotes(notes);
+    }
+
+    public void addNote(ArrayList<Note> notes, Note note) {
         notes.add(0, note);
         position = 0;
-        tinydb.remove("Notes");
+    }
+
+    public void updateNotes(ArrayList<Note> notes) {
+        if (sharedPref.contains("Notes")) {
+            tinydb.remove("Notes");
+        }
         tinydb.putListNote("Notes", notes);
     }
 
-    public void deleteNoteFile(Note note) {
+    public void deleteNoteFile(ArrayList<Note> notes, Note note) {
         File file = note.getFile();
         boolean didDelete = file.delete();
+        notes.remove(position);
     }
 
-    public void Save() {
+    public boolean makeTitle(ArrayList<Note> notes) {
+        Note note = notes.get(position);
+        String title = noteTitleField.getText().toString();
+        if (title.equals("")) {
+            title = randomNameExtension("Untitled_Note");
+        }
+        for (int i = 0 ; i < notes.size() ; i++) {
+            if (i != position) {
+                Note n = notes.get(i);
+                if (n.getTitle().equals(title)) {
+                    Toast.makeText(this, "A note with the same title already exists. Change the title to proceed.", Toast.LENGTH_LONG).show();
+                    return false;
+                }
+            }
+        }
+        note.setTitle(title);
+        return true;
+    }
+
+    public void Save(ArrayList<Note> notes) {
         String noteText = Objects.requireNonNull(noteTextField.getText()).toString();
-        String noteTitle = noteTitleField.getText().toString();
-        ArrayList<Note> notes = tinydb.getListNote("Notes");
         Note note = notes.get(position);
 
-        //set note title
-        if (noteTitle.equals("")) {
-            noteTitle = randomNameExtension("Untitled_Note");
-        }
-        note.setTitle(noteTitle);
-
-        //rename temp/current file
-        deleteNoteFile(note);
+        //rename temp/current file and set note title
+        deleteNoteFile(notes, note);
         String root = Environment.getExternalStorageDirectory().toString();
         File file = new File(root + "/notes", note.getTitle());
-        boolean didDelete = file.delete();
         note.setFile(file);
 
         //set note content
@@ -128,15 +169,19 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
         }
 
         //update notes list
-        updateDb(notes, note);
+        addNote(notes, note);
+        sortNotes(notes);
     }
 
     @Override
     public void onBackPressed() {
-        Save();
-        Intent intent = new Intent(this, NotesActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        startActivity(intent);
+        ArrayList<Note> notes = tinydb.getListNote("Notes");
+        if (makeTitle(notes)) {
+            Save(notes);
+            Intent intent = new Intent(this, NotesActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -145,8 +190,8 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
             if (resultCode.equals("RESULT_OK")) {
                 ArrayList<Note> notes = tinydb.getListNote("Notes");
                 Note note = notes.get(position);
-                deleteNoteFile(note);
-                updateDb(notes, note);
+                deleteNoteFile(notes, note);
+                updateNotes(notes);
 
                 Intent intent = new Intent(this, NotesActivity.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
@@ -175,12 +220,14 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
     @SuppressLint("NonConstantResourceId")
     @Override
     public boolean onOptionsItemSelected (MenuItem item){
+        ArrayList<Note> notes = tinydb.getListNote("Notes");
         switch (item.getItemId()) {
             case R.id.action_bookmark:
-                ArrayList<Note> notes = tinydb.getListNote("Notes");
                 Note note = notes.get(position);
                 note.setFlagged(!note.isFlagged());
-                updateDb(notes, note);
+                notes.remove(position);
+                addNote(notes, note);
+                updateNotes(notes);
                 return true;
             case R.id.action_thumbnail:
                 //Intent intent = new Intent(this, SettingsActivity.class);
@@ -196,10 +243,12 @@ public class NotesOpenedActivity extends AppCompatActivity implements DialogFrag
                 newFragment.show(getSupportFragmentManager(), "delete");
                 return true;
             case android.R.id.home:
-                Save();
-                Intent intent = new Intent(this, NotesActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
+                if (makeTitle(notes)) {
+                    Save(notes);
+                    Intent intent = new Intent(this, NotesActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
